@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.lang.Object;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -76,21 +77,26 @@ public class Image extends HttpServlet {
         try {
             command = (Integer) CommandsMap.get(args[1]);
         } catch (Exception et) {
-            error("Bad Operator", response);
+            error("Bad Operator", request, response);
             return;
         }
+        try {
         switch (command) {
             case 1:
-                DisplayImage(Convertors.DISPLAY_PROCESSED,args[2], response);
+                DisplayImage(Convertors.DISPLAY_PROCESSED,args[2], request, response);
                 break;
             case 2:
                 DisplayImageList(args[2], request, response);
                 break;
             case 3:
-                DisplayImage(Convertors.DISPLAY_THUMB,args[2],  response);
+                DisplayImage(Convertors.DISPLAY_THUMB,args[2], request, response);
                 break;
             default:
-                error("Bad Operator", response);
+                error("Bad Operator", request, response);
+        }
+        }
+        catch (ArrayIndexOutOfBoundsException outofb) {
+            error("ArrayIndexOutOfBoundsException", request, response);
         }
     }
 
@@ -101,15 +107,19 @@ public class Image extends HttpServlet {
         RequestDispatcher rd = request.getRequestDispatcher("/UsersPics.jsp");
         request.setAttribute("Pics", lsPics);
         rd.forward(request, response);
-
     }
+    
 
-    private void DisplayImage(int type,String Image, HttpServletResponse response) throws ServletException, IOException {
+    private void DisplayImage(int type,String Image, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PicModel tm = new PicModel();
         tm.setCluster(cluster);
   
-        
-        Pic p = tm.getPic(type,java.util.UUID.fromString(Image));
+        try {
+            Pic p = tm.getPic(type,java.util.UUID.fromString(Image));
+        }
+        catch (IllegalArgumentException illarg) {
+            error("IllegalArgumentException", request, response);
+        }
         
         OutputStream out = response.getOutputStream();
 
@@ -126,6 +136,7 @@ public class Image extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
         for (Part part : request.getParts()) {
             System.out.println("Part Name " + part.getName());
 
@@ -139,6 +150,7 @@ public class Image extends HttpServlet {
             String username="majed";
             if (lg.getlogedin()){
                 username=lg.getUsername();
+
             }
             if (i > 0) {
                 byte[] b = new byte[i + 1];
@@ -151,18 +163,23 @@ public class Image extends HttpServlet {
                 is.close();
             }
             RequestDispatcher rd = request.getRequestDispatcher("/upload.jsp");
-             rd.forward(request, response);
+            rd.forward(request, response);
         }
+        
 
     }
 
-    private void error(String mess, HttpServletResponse response) throws ServletException, IOException {
-
+    private void error(String mess, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("error", mess);
+        RequestDispatcher rd = request.getRequestDispatcher("/error.jsp");
+        rd.forward(request, response);
+        /*
         PrintWriter out = null;
         out = new PrintWriter(response.getOutputStream());
         out.println("<h1>You have a na error in your input</h1>");
         out.println("<h2>" + mess + "</h2>");
         out.close();
         return;
+        */
     }
 }

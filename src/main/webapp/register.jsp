@@ -30,9 +30,11 @@
                 <ul>
                     <li>User Name <input type="text" name="username"></li>
                     <li>Password <input type="password" name="password"></li>
+                    <li>Confirm password <input type="password" name="confirm_password"></li>
+                    <li>Email <input type="email" name="email"> </li>
                 </ul>
                 <br/>
-                <input type="submit" value="Regidter"> 
+                <input type="Submit" value="Register"> 
             </form>
 
         </article>

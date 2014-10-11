@@ -8,6 +8,7 @@ package uk.ac.dundee.computing.aec.instagrim.servlets;
 
 import com.datastax.driver.core.Cluster;
 import java.io.IOException;
+ import javax.swing.JOptionPane;
 import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -45,10 +46,26 @@ public class Register extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username=request.getParameter("username");    
+        
+        String username=request.getParameter("username");
+        if (username == ""){
+            error("Enter username to register, please", request, response);
+        }
+        else if (username.length() < 4 || username.length() > 15){
+            error("Username should not be less than 4 or more than 15 char long", request, response);
+        }
+        
         String password=request.getParameter("password");
+        if (password == ""){
+            error("Enter password to complete registration process", request, response);
+        }
+         else if (password.length() < 4 || password.length() > 15){
+            error("Password should not be less than 4 or more than 15 char long", request, response);
+        }
+        
         String confirm_password=request.getParameter("confirm_password");
         String email=request.getParameter("email");
+        
         
         if (password.equals(confirm_password)){
             User us=new User();
@@ -60,8 +77,9 @@ public class Register extends HttpServlet {
         else
         {
             //redirect back to the error page
-            response.sendRedirect("/Instagrim/error.jsp");
+            error("Passports entered should match", request, response);
         }
+        
     }
 
     /**
@@ -74,5 +92,10 @@ public class Register extends HttpServlet {
         return "Short description";
     }// </editor-fold>
     
-
+    private void error(String mess, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("error", mess);
+        RequestDispatcher rd = request.getRequestDispatcher("/error.jsp");
+        rd.forward(request, response);    
+        return;     
+    }
 }

@@ -27,15 +27,19 @@ public class User {
         
     }
     
-    public boolean RegisterUser(String username, String Password){
+    public boolean RegisterUser(String username, String Password, String confirm_password, String email){
         AeSimpleSHA1 sha1handler=  new AeSimpleSHA1();
         String EncodedPassword=null;
         try {
+           
             EncodedPassword= sha1handler.SHA1(Password);
+          
         }catch (UnsupportedEncodingException | NoSuchAlgorithmException et){
             System.out.println("Can't check your password");
             return false;
+        
         }
+    
         Session session = cluster.connect("instagrim");
         PreparedStatement ps = session.prepare("insert into userprofiles (login,password) Values(?,?)");
        
@@ -53,6 +57,7 @@ public class User {
         String EncodedPassword=null;
         try {
             EncodedPassword= sha1handler.SHA1(Password);
+           
         }catch (UnsupportedEncodingException | NoSuchAlgorithmException et){
             System.out.println("Can't check your password");
             return false;
