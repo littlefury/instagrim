@@ -49,7 +49,13 @@ public class Login extends HttpServlet {
             throws ServletException, IOException {
         
         String username=request.getParameter("username");
+        if (username == ""){
+            error("Enter username to log in", request, response);
+        }
         String password=request.getParameter("password");
+        if (password == ""){
+            error("Enter password to log in", request, response);
+        }
         
         User us=new User();
         us.setCluster(cluster);
@@ -68,7 +74,7 @@ public class Login extends HttpServlet {
 	    rd.forward(request,response);
             
         }else{
-            response.sendRedirect("/Instagrim/login.jsp");
+            error("Login and/or password is not valid", request, response);
         }
         
     }
@@ -83,4 +89,10 @@ public class Login extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private void error(String mess, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("error", mess);
+        RequestDispatcher rd = request.getRequestDispatcher("/error.jsp");
+        rd.forward(request, response);    
+        return;     
+    }
 }
