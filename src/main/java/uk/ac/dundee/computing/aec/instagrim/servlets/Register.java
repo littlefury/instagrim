@@ -45,15 +45,23 @@ public class Register extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username=request.getParameter("username");
+        String username=request.getParameter("username");    
         String password=request.getParameter("password");
+        String confirm_password=request.getParameter("confirm_password");
+        String email=request.getParameter("email");
         
-        User us=new User();
-        us.setCluster(cluster);
-        us.RegisterUser(username, password);
+        if (password.equals(confirm_password)){
+            User us=new User();
+            us.setCluster(cluster);
+            us.RegisterUser(username, password, confirm_password, email);
         
-	response.sendRedirect("/Instagrim");
-        
+            response.sendRedirect("/Instagrim");
+        }
+        else
+        {
+            //redirect back to the error page
+            response.sendRedirect("/Instagrim/error.jsp");
+        }
     }
 
     /**
@@ -65,5 +73,6 @@ public class Register extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    
 
 }
