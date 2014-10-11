@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
+import javax.persistence.Convert;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -139,31 +140,45 @@ public class Image extends HttpServlet {
         
         for (Part part : request.getParts()) {
             System.out.println("Part Name " + part.getName());
-
+            // check that it is an image not more than 200mb
             String type = part.getContentType();
-            String filename = part.getSubmittedFileName();
+            if (!type.equalsIgnoreCase("image/jpg")){
+                error("Unable to upload file of this format", request, response);
+            }
+            else {
+                
+                long imSize = part.getSize();
+                
+                // 200mb max size
+                if (209715200L < imSize){
+                    error("Image that you are trying to upload is too big", request, response);
+                }
+                else {
+                    String filename = part.getSubmittedFileName();
             
-            InputStream is = request.getPart(part.getName()).getInputStream();
-            int i = is.available();
-            HttpSession session=request.getSession();
-            LoggedIn lg= (LoggedIn)session.getAttribute("LoggedIn");
-            String username="majed";
-            if (lg.getlogedin()){
-                username=lg.getUsername();
-
+                    InputStream is = request.getPart(part.getName()).getInputStream();
+                    int i = is.available();
+                    HttpSession session=request.getSession();
+                    LoggedIn lg= (LoggedIn)session.getAttribute("LoggedIn");
+                    String username="majed";
+                    if (lg.getlogedin()){
+                        username=lg.getUsername();
+                    }
+            
+                    if (i > 0) {
+                        byte[] b = new byte[i + 1];
+                        is.read(b);
+                        System.out.println("Length : " + b.length);
+                        PicModel tm = new PicModel();
+                        tm.setCluster(cluster);
+                        tm.insertPic(b, type, filename, username);
+                
+                        is.close();
+                    }
+                    RequestDispatcher rd = request.getRequestDispatcher("/upload.jsp");
+                    rd.forward(request, response);
+                }
             }
-            if (i > 0) {
-                byte[] b = new byte[i + 1];
-                is.read(b);
-                System.out.println("Length : " + b.length);
-                PicModel tm = new PicModel();
-                tm.setCluster(cluster);
-                tm.insertPic(b, type, filename, username);
-
-                is.close();
-            }
-            RequestDispatcher rd = request.getRequestDispatcher("/upload.jsp");
-            rd.forward(request, response);
         }
         
 
