@@ -41,14 +41,24 @@ public class User {
         }
     
         Session session = cluster.connect("instagrim");
+        PreparedStatement psCheck = session.prepare("select login from userprofiles where login =?");
         PreparedStatement ps = session.prepare("insert into userprofiles (login,password) Values(?,?)");
        
+        BoundStatement boundStatementCheck = new BoundStatement(psCheck);
         BoundStatement boundStatement = new BoundStatement(ps);
+        
+        ResultSet resultSet = session.execute( // this is where the query is executed
+                boundStatementCheck.bind( // here you are binding the 'boundStatement'
+                        username));
+        
+        if (!resultSet.isExhausted()){
+            return false;
+        }
+        else{
         session.execute( // this is where the query is executed
                 boundStatement.bind( // here you are binding the 'boundStatement'
-                        username,EncodedPassword));
-        //We are assuming this always works.  Also a transaction would be good here !
-        
+                        username, EncodedPassword));
+        }
         return true;
     }
     

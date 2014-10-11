@@ -70,9 +70,14 @@ public class Register extends HttpServlet {
         if (password.equals(confirm_password)){
             User us=new User();
             us.setCluster(cluster);
-            us.RegisterUser(username, password, confirm_password, email);
-        
-            response.sendRedirect("/Instagrim");
+            boolean checkReg = us.RegisterUser(username, password, confirm_password, email);
+            
+            if (checkReg == false){
+                error("Registration failed, username already exists", request, response);
+            }
+            else{
+                response.sendRedirect("/Instagrim");
+            }
         }
         else
         {
