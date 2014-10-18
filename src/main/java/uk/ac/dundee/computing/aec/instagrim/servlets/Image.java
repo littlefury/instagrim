@@ -115,8 +115,9 @@ public class Image extends HttpServlet {
         PicModel tm = new PicModel();
         tm.setCluster(cluster);
   
+        Pic p = tm.getPic(type,java.util.UUID.fromString(Image));
         try {
-            Pic p = tm.getPic(type,java.util.UUID.fromString(Image));
+            p = tm.getPic(type,java.util.UUID.fromString(Image));
         }
         catch (IllegalArgumentException illarg) {
             error("IllegalArgumentException", request, response);
