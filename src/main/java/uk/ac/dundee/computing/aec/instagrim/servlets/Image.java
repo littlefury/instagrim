@@ -155,7 +155,7 @@ public class Image extends HttpServlet {
         success = tm.deletePic(java.util.UUID.fromString(picid), user);  
         if (success == true)
         {
-            RequestDispatcher view = request.getRequestDispatcher("/UsersPics.jsp");
+            RequestDispatcher view = request.getRequestDispatcher("/Images/" + user);
             view.forward(request, response);
         }
         else
@@ -170,7 +170,8 @@ public class Image extends HttpServlet {
             System.out.println("Part Name " + part.getName());
             // check that it is an image not more than 200mb
             String type = part.getContentType();
-            if (!type.equalsIgnoreCase("image/jpg")){
+            // Internet media types
+            if (!type.equalsIgnoreCase("image/jpeg")){
                 error("Unable to upload file of this format", request, response);
             }
             else {
