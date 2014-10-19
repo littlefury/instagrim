@@ -38,7 +38,9 @@ import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
     "/Image/*",
     "/Thumb/*",
     "/Images",
-    "/Images/*"
+    "/Images/*",
+        "/Delete/",
+        "/Delete/*"
 })
 @MultipartConfig
 
@@ -59,6 +61,7 @@ public class Image extends HttpServlet {
         CommandsMap.put("Image", 1);
         CommandsMap.put("Images", 2);
         CommandsMap.put("Thumb", 3);
+        CommandsMap.put("Delete", 4);
 
     }
 
@@ -91,6 +94,9 @@ public class Image extends HttpServlet {
                 break;
             case 3:
                 DisplayImage(Convertors.DISPLAY_THUMB,args[2], request, response);
+                break;
+            case 4:
+                DeleteImage(args[2], request, response);
                 break;
             default:
                 error("Bad Operator", request, response);
@@ -135,6 +141,27 @@ public class Image extends HttpServlet {
             out.write(buffer, 0, length);
         }
         out.close();
+    }
+    
+    private void DeleteImage(String picid, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        PicModel tm = new PicModel();
+        tm.setCluster(cluster);
+        
+        HttpSession session = request.getSession();
+        LoggedIn lg = (LoggedIn) session.getAttribute("LoggedIn");
+        String user = lg.getUsername();
+
+        boolean success;
+        success = tm.deletePic(java.util.UUID.fromString(picid), user);  
+        if (success == true)
+        {
+            RequestDispatcher view = request.getRequestDispatcher("/UsersPics.jsp");
+            view.forward(request, response);
+        }
+        else
+        {
+            error("Image was not found" + success, request, response);
+        }
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

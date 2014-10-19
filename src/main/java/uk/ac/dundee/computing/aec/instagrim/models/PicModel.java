@@ -86,6 +86,48 @@ public class PicModel {
             System.out.println("Error --> " + ex);
         }
     }
+    
+    public boolean deletePic(java.util.UUID picid, String user){
+        try{
+            Session session = cluster.connect("instagrim");
+
+            PreparedStatement psTime = session.prepare("SELECT interaction_time, user FROM pics WHERE picid = ?");
+            PreparedStatement psDeletePic = session.prepare("DELETE FROM pics WHERE picid = ?");
+            PreparedStatement psDeletePicList = session.prepare("DELETE FROM userpiclist WHERE user = ? AND pic_added = ?");
+            BoundStatement bsTime = new BoundStatement(psTime);
+            BoundStatement bsDeletePic = new BoundStatement(psDeletePic);
+            BoundStatement bsDeletePicList = new BoundStatement(psDeletePicList);
+            
+            ResultSet rs = session.execute(bsTime.bind(picid));
+            Date dateAdd = new Date();
+            String owner = "";
+            if (rs.isExhausted()) 
+            {
+                session.close();
+                return false;
+            } 
+            else 
+            {
+                for (Row row : rs) 
+                {
+                    dateAdd = row.getDate("interaction_time");
+                    owner = row.getString("user");
+                }
+            }
+            if (owner.equals(user))
+            {
+                session.execute(bsDeletePic.bind(picid));
+                session.execute(bsDeletePicList.bind(user, dateAdd));
+                session.close();
+                return true;
+            }
+            session.close();
+            return false;
+        }
+        catch(Exception ex){
+           return false;
+        }      
+    }
 
     public byte[] picresize(String picid,String type) {
         try {
