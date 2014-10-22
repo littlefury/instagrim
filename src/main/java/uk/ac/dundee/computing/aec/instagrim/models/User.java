@@ -14,6 +14,8 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
+import java.util.Set;
 import uk.ac.dundee.computing.aec.instagrim.lib.AeSimpleSHA1;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 
@@ -27,7 +29,7 @@ public class User {
         
     }
     
-    public boolean RegisterUser(String username, String Password, String confirm_password, String email){
+    public boolean RegisterUser(String username, String Password, String confirm_password, String email, String first_name, String last_name){
         AeSimpleSHA1 sha1handler=  new AeSimpleSHA1();
         String EncodedPassword=null;
         try {
@@ -40,9 +42,12 @@ public class User {
         
         }
     
+        Set<String> emailSet = new HashSet<String>();
+        emailSet.add(email);
+        
         Session session = cluster.connect("instagrim");
         PreparedStatement psCheck = session.prepare("select login from userprofiles where login =?");
-        PreparedStatement ps = session.prepare("insert into userprofiles (login,password) Values(?,?)");
+        PreparedStatement ps = session.prepare("insert into userprofiles (login,password,email,first_name,last_name) Values(?,?,?,?,?)");
        
         BoundStatement boundStatementCheck = new BoundStatement(psCheck);
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -57,7 +62,7 @@ public class User {
         else{
         session.execute( // this is where the query is executed
                 boundStatement.bind( // here you are binding the 'boundStatement'
-                        username, EncodedPassword));
+                        username, EncodedPassword,emailSet,first_name,last_name));
         }
         return true;
     }
@@ -98,5 +103,5 @@ public class User {
         this.cluster = cluster;
     }
 
-    
-}
+       
+    }

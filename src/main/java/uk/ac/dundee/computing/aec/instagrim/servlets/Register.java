@@ -66,11 +66,14 @@ public class Register extends HttpServlet {
         String confirm_password=request.getParameter("confirm_password");
         String email=request.getParameter("email");
         
+        String first_name=request.getParameter("first_name");
+        String last_name=request.getParameter("last_name");
+        // it should not be longer than bla bla bla
         
         if (password.equals(confirm_password)){
             User us=new User();
             us.setCluster(cluster);
-            boolean checkReg = us.RegisterUser(username, password, confirm_password, email);
+            boolean checkReg = us.RegisterUser(username, password, confirm_password, email, first_name, last_name);
             
             if (checkReg == false){
                 error("Registration failed, username already exists", request, response);

@@ -19,7 +19,7 @@
             <ul>
                 <li class="nav"><a href="upload.jsp">Upload</a></li>
                 <li class="nav"><a href="/Instagrim/Images/majed">Sample Images</a></li>
-                <form method = "POST" action = "Logout">
+                <form method = "POST" action = "/Instagrim/Logout">
                     <input type = "submit" value ="Logout">
                 </form> 
             </ul>

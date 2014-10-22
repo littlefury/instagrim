@@ -32,6 +32,8 @@
                     <li>Password <input type="password" name="password"></li>
                     <li>Confirm password <input type="password" name="confirm_password"></li>
                     <li>Email <input type="email" name="email"> </li>
+                    <li>First name <input type="text" name="first_name"</li>
+                    <li>Last name <input type="text" name="last_name"</li>
                 </ul>
                 <br/>
                 <input type="Submit" value="Register"> 
