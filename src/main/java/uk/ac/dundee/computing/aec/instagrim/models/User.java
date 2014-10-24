@@ -103,5 +103,46 @@ public class User {
         this.cluster = cluster;
     }
 
-       
-    }
+    public java.util.LinkedList<String> getProfile(String user) {
+        java.util.LinkedList<String> info = new java.util.LinkedList<>();
+        Session session = cluster.connect("instagrim");
+        PreparedStatement ps = session.prepare("select * from userprofiles where login =?");
+        ResultSet rs = null;
+        BoundStatement boundStatement = new BoundStatement(ps);
+        rs = session.execute( // this is where the query is executed
+                boundStatement.bind( // here you are binding the 'boundStatement'
+                        user));
+        
+        if (rs.isExhausted()) {
+            System.out.println("No user returned");
+            return null;
+        } else {
+            for (Row row : rs) {
+              //  String ulog;
+              //  ulog = row.getString("login");
+              //  info.push(ulog);
+                String login = row.getString("login");
+                
+                
+                
+                Set<String> email = row.getSet("email", String.class);
+                String[] EmailArr = email.toArray(new String[0]);
+                StringBuffer emailres = new StringBuffer();
+                for (int i=0; i< EmailArr.length; i++){
+                    emailres.append(EmailArr[i]);
+                }
+                String uemail = emailres.toString();
+                String first_name = row.getString("first_name");
+                String last_name = row.getString("last_name");
+                info.push(user);
+                info.push(uemail);
+                info.push(first_name);
+                info.push(last_name);
+            }
+        }
+        return info;
+       }
+    
+}
+
+    
