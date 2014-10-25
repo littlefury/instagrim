@@ -27,6 +27,7 @@ import org.apache.commons.fileupload.util.Streams;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
 import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
+import uk.ac.dundee.computing.aec.instagrim.models.User;
 import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 
@@ -145,23 +146,33 @@ public class Image extends HttpServlet {
     
     private void DeleteImage(String picid, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         PicModel tm = new PicModel();
+        User u = new User();
         tm.setCluster(cluster);
         
         HttpSession session = request.getSession();
         LoggedIn lg = (LoggedIn) session.getAttribute("LoggedIn");
+        if(lg==null){
+            error("You're not logged in, " + "error", request, response);
+        }
         String user = lg.getUsername();
-
-        boolean success;
-        success = tm.deletePic(java.util.UUID.fromString(picid), user);  
-        if (success == true)
-        {
-            RequestDispatcher view = request.getRequestDispatcher("/Images/" + user);
-            view.forward(request, response);
+        
+        boolean owner;
+        owner = u.checkUserLogin(user, lg);
+        if (owner == true){
+            boolean success;
+            success = tm.deletePic(java.util.UUID.fromString(picid), user);  
+            if (success == true) {
+                RequestDispatcher view = request.getRequestDispatcher("/Images/" + user);
+                view.forward(request, response);
+            }
+            else {
+                error("An error appeared, " + "Try again", request, response);
+            }
         }
-        else
-        {
-            error("Image was not found" + success, request, response);
+        else{
+            error("An error occured while deleting an image" + owner, request, response);
         }
+        
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

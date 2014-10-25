@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
 import uk.ac.dundee.computing.aec.instagrim.lib.AeSimpleSHA1;
+import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 
 /**
@@ -103,6 +104,21 @@ public class User {
         this.cluster = cluster;
     }
 
+       
+       public boolean checkUserLogin(String name, LoggedIn loggedin){
+           if(loggedin == null || !loggedin.getlogedin()){
+               return false;
+           }
+           else{
+               String user = loggedin.getUsername();
+               if(name.equals(user)){
+                   return true;
+               }
+           }
+         return false;  
+       }
+       
+       
     public java.util.LinkedList<String> getProfile(String user) {
         java.util.LinkedList<String> info = new java.util.LinkedList<>();
         Session session = cluster.connect("instagrim");
