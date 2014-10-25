@@ -34,7 +34,9 @@ import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
  */
 @WebServlet(name = "Profile", 
         urlPatterns = {"/Profile/*",
-                        "/Profile"})
+                        "/Profile",
+                        "/profile",
+                        "/profile/*"})
 
 public class Profile extends HttpServlet{
     private Cluster cluster;
@@ -55,24 +57,34 @@ public class Profile extends HttpServlet{
         String args[] = Convertors.SplitRequestPath(request);
         int command;
         
-        
+        try{
       
                 String user = args[2];
                 DisplayProfile(user, request, response);
-            
-        
-        
-        
+        }
+        catch (ArrayIndexOutOfBoundsException outofb) {
+            error("An error occured", request, response);
+        }     
     }
     
     
     private void DisplayProfile(String user, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User u = new User();
         u.setCluster(cluster);
+        
+        java.util.LinkedList<String> checkProf = u.getProfile(user);
+            
+            if (checkProf == null){
+                error("Profile doesn't exist", request, response);
+            }
+            else{
+               
+            
         java.util.LinkedList<String> info = u.getProfile(user);
         RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");
         request.setAttribute("info", info);
         rd.forward(request, response);
+            }
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
