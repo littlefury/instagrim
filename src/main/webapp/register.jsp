@@ -9,20 +9,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Instagrim</title>
+        <title>InstagrimTL</title>
         <link rel="stylesheet" type="text/css" href="Styles.css" />
     </head>
     <body>
         <header>
-        <h1>InstaGrim ! </h1>
+        <h1>InstagrimTL ! </h1>
         <h2>Your world in Black and White</h2>
         </header>
-        <nav>
-            <ul>
-                
-                <li><a href="/Instagrim/Images/majed">Sample Images</a></li>
-            </ul>
-        </nav>
+     
        
         <article>
             <h3>Register as user</h3>
@@ -31,9 +26,9 @@
                     <li>User Name <input type="text" name="username"></li>
                     <li>Password <input type="password" name="password"></li>
                     <li>Confirm password <input type="password" name="confirm_password"></li>
-                    <li>Email <input type="email" name="email"> </li>
-                    <li>First name <input type="text" name="first_name"</li>
-                    <li>Last name <input type="text" name="last_name"</li>
+                    <li>Email <input type="email" name="email"></li>
+                    <li>First name <input type="text" name="first_name"></li>
+                    <li>Last name <input type="text" name="last_name"></li>
                 </ul>
                 <br/>
                 <input type="Submit" value="Register"> 
@@ -42,7 +37,7 @@
         </article>
         <footer>
             <ul>
-                <li class="footer"><a href="/Instagrim">Home</a></li>
+                <li class="footer"><a href="/InstagrimTL">Home</a></li>
             </ul>
         </footer>
     </body>

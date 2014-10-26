@@ -4,11 +4,11 @@
  * and open the template in the editor.
  */
 
-package uk.ac.dundee.computing.aec.instagrim.servlets;
+package uk.ac.dundee.computing.aec.InstagrimTL.servlets;
 
 import com.datastax.driver.core.Cluster;
 import java.io.IOException;
- import javax.swing.JOptionPane;
+import javax.swing.JOptionPane;
 import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -17,8 +17,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
-import uk.ac.dundee.computing.aec.instagrim.models.User;
+import uk.ac.dundee.computing.aec.InstagrimTL.lib.CassandraHosts;
+import uk.ac.dundee.computing.aec.InstagrimTL.models.User;
 
 /**
  *
@@ -67,8 +67,19 @@ public class Register extends HttpServlet {
         String email=request.getParameter("email");
         
         String first_name=request.getParameter("first_name");
+        if (first_name == ""){
+            error("Enter your first name to complete registration process", request, response);
+        }
+         else if (first_name.length() < 2 || first_name.length() > 15){
+            error("Your name should not be less than 2 or more than 15 char long", request, response);
+        }
         String last_name=request.getParameter("last_name");
-        // it should not be longer than bla bla bla
+        if (last_name == ""){
+            error("Enter your last name to complete registration process", request, response);
+        }
+         else if (last_name.length() < 4 || last_name.length() > 15){
+            error("Your last name should not be less than 4 or more than 15 char long", request, response);
+        }
         
         if (password.equals(confirm_password)){
             User us=new User();
@@ -79,7 +90,7 @@ public class Register extends HttpServlet {
                 error("Registration failed, username already exists", request, response);
             }
             else{
-                response.sendRedirect("/Instagrim");
+                response.sendRedirect("/InstagrimTL");
             }
         }
         else

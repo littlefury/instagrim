@@ -1,4 +1,4 @@
-package uk.ac.dundee.computing.aec.instagrim.models;
+package uk.ac.dundee.computing.aec.InstagrimTL.models;
 
 /*
  * Expects a cassandra columnfamily defined as
@@ -40,8 +40,8 @@ import static javax.swing.Spring.width;
 import static org.imgscalr.Scalr.*;
 import org.imgscalr.Scalr.Method;
 
-import uk.ac.dundee.computing.aec.instagrim.lib.*;
-import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
+import uk.ac.dundee.computing.aec.InstagrimTL.lib.*;
+import uk.ac.dundee.computing.aec.InstagrimTL.stores.Pic;
 //import uk.ac.dundee.computing.aec.stores.TweetStore;
 
 public class PicModel {
@@ -66,8 +66,8 @@ public class PicModel {
             java.util.UUID picid = convertor.getTimeUUID();
             
             //The following is a quick and dirty way of doing this, will fill the disk quickly !
-            Boolean success = (new File("/var/tmp/instagrim/")).mkdirs();
-            FileOutputStream output = new FileOutputStream(new File("/var/tmp/instagrim/" + picid));
+            Boolean success = (new File("/var/tmp/InstagrimTL/")).mkdirs();
+            FileOutputStream output = new FileOutputStream(new File("/var/tmp/InstagrimTL/" + picid));
 
             output.write(b);
             byte []  thumbb = picresize(picid.toString(),types[1]);
@@ -76,7 +76,7 @@ public class PicModel {
             byte[] processedb = picdecolour(picid.toString(),types[1]);
             ByteBuffer processedbuf=ByteBuffer.wrap(processedb);
             int processedlength=processedb.length;
-            Session session = cluster.connect("instagrim");
+            Session session = cluster.connect("InstagrimTL");
 
             PreparedStatement psInsertPic = session.prepare("insert into pics ( picid, image,thumb,processed, user, interaction_time,imagelength,thumblength,processedlength,type,name) values(?,?,?,?,?,?,?,?,?,?,?)");
             PreparedStatement psInsertPicToUser = session.prepare("insert into userpiclist ( picid, user, pic_added) values(?,?,?)");
@@ -95,7 +95,7 @@ public class PicModel {
     
     public boolean deletePic(java.util.UUID picid, String user){
         try{
-            Session session = cluster.connect("instagrim");
+            Session session = cluster.connect("InstagrimTL");
 
             PreparedStatement psTime = session.prepare("SELECT interaction_time, user FROM pics WHERE picid = ?");
             PreparedStatement psDeletePic = session.prepare("DELETE FROM pics WHERE picid = ?");
@@ -137,7 +137,7 @@ public class PicModel {
 
     public byte[] picresize(String picid,String type) {
         try {
-            BufferedImage BI = ImageIO.read(new File("/var/tmp/instagrim/" + picid));
+            BufferedImage BI = ImageIO.read(new File("/var/tmp/InstagrimTL/" + picid));
             BufferedImage thumbnail = createThumbnail(BI);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(thumbnail, type, baos);
@@ -154,7 +154,7 @@ public class PicModel {
     
     public byte[] picdecolour(String picid,String type) {
         try {
-            BufferedImage BI = ImageIO.read(new File("/var/tmp/instagrim/" + picid));
+            BufferedImage BI = ImageIO.read(new File("/var/tmp/InstagrimTL/" + picid));
             BufferedImage processed = createProcessed(BI);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(processed, type, baos);
@@ -187,20 +187,6 @@ public class PicModel {
                     original.setRGB(x, y, col.getRGB());
                 }
             }
-//            int width = original.getWidth();
-//            int height = original.getHeight();
-//            // create red image
-//            BufferedImage redVersion = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            
-            // I also suspect this is actually drawing the image.. which is wrong..-.-
-            
-//            Graphics2D g = (Graphics2D) redVersion.getGraphics();
-//            g.setColor(Color.red);
-//            g.fillRect(0, 0, width, height);
-//
-//            // paint original with composite
-//            g.setComposite(AlphaComposite.DstIn);
-//            g.drawImage(original, 0, 0, width, height, 0, 0, width, height, null);
             
             ByteArrayOutputStream bs = new ByteArrayOutputStream();
             ImageIO.write(original, types[1], bs);
@@ -230,7 +216,7 @@ public class PicModel {
    
     public java.util.LinkedList<Pic> getPicsForUser(String User) {
         java.util.LinkedList<Pic> Pics = new java.util.LinkedList<>();
-        Session session = cluster.connect("instagrim");
+        Session session = cluster.connect("InstagrimTL");
         PreparedStatement ps = session.prepare("select picid from userpiclist where user =?");
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -254,7 +240,7 @@ public class PicModel {
     }
 
     public Pic getPic(int image_type, java.util.UUID picid) throws IOException {
-        Session session = cluster.connect("instagrim");
+        Session session = cluster.connect("InstagrimTL");
         ByteBuffer bImage = null;
         String type = null;
         int length = 0;

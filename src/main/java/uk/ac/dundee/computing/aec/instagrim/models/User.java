@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package uk.ac.dundee.computing.aec.instagrim.models;
+package uk.ac.dundee.computing.aec.InstagrimTL.models;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
@@ -16,9 +16,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
-import uk.ac.dundee.computing.aec.instagrim.lib.AeSimpleSHA1;
-import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
-import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
+import uk.ac.dundee.computing.aec.InstagrimTL.lib.AeSimpleSHA1;
+import uk.ac.dundee.computing.aec.InstagrimTL.stores.LoggedIn;
+import uk.ac.dundee.computing.aec.InstagrimTL.stores.Pic;
 
 /**
  *
@@ -46,7 +46,7 @@ public class User {
         Set<String> emailSet = new HashSet<String>();
         emailSet.add(email);
         
-        Session session = cluster.connect("instagrim");
+        Session session = cluster.connect("InstagrimTL");
         PreparedStatement psCheck = session.prepare("select login from userprofiles where login =?");
         PreparedStatement ps = session.prepare("insert into userprofiles (login,password,email,first_name,last_name) Values(?,?,?,?,?)");
        
@@ -78,7 +78,7 @@ public class User {
             System.out.println("Can't check your password");
             return false;
         }
-        Session session = cluster.connect("instagrim");
+        Session session = cluster.connect("InstagrimTL");
         PreparedStatement ps = session.prepare("select password from userprofiles where login =?");
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -121,7 +121,7 @@ public class User {
        
     public java.util.LinkedList<String> getProfile(String user) {
         java.util.LinkedList<String> info = new java.util.LinkedList<>();
-        Session session = cluster.connect("instagrim");
+        Session session = cluster.connect("InstagrimTL");
         PreparedStatement ps = session.prepare("select * from userprofiles where login =?");
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -137,7 +137,7 @@ public class User {
               //  String ulog;
               //  ulog = row.getString("login");
               //  info.push(ulog);
-                String login = row.getString("login");
+              String login = row.getString("login");
                 
                 
                 
@@ -167,7 +167,7 @@ public class User {
         
         System.out.println("email: " + email + " first: " + first_name + " last: " + last_name + " user: " + username);
         
-        Session session = cluster.connect("instagrim");
+        Session session = cluster.connect("InstagrimTL");
         System.out.println("Update uprof");
         //PreparedStatement psCheck = session.prepare("select login from userprofiles where login =?");
         PreparedStatement ps = session.prepare("update userprofiles set email = ?, first_name = ?,last_name = ? where login =?");

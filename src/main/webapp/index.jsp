@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : index
     Created on : Sep 28, 2014, 7:01:44 PM
     Author     : Administrator
@@ -6,17 +6,17 @@
 
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="uk.ac.dundee.computing.aec.instagrim.stores.*" %>
+<%@page import="uk.ac.dundee.computing.aec.InstagrimTL.stores.*" %>
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Instagrim</title>
+        <title>InstagrimTL</title>
         <link rel="stylesheet" type="text/css" href="Styles.css" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
         <header>
-            <h1>InstaGrim ! </h1>
+            <h1>InstagrimTL ! </h1>
             <h2>Your world in Black and White</h2>
         </header>
         <nav>
@@ -32,26 +32,23 @@
                             if (lg.getlogedin() == true){
                     %>
 
-                <li><a href="/Instagrim/Images/<%=lg.getUsername()%>">Your Images</a></li>
-              
-                <form method = "POST" action = "/Instagrim/Logout">
+                <li><a href="/InstagrimTL/Images/<%=lg.getUsername()%>">Your Images</a></li>
+                <li><a href="/InstagrimTL/Profile/<%=lg.getUsername()%>">Your profile</a></li>
+                <form method = "POST" action = "/InstagrimTL/Logout">
                     <input type = "submit" value ="Logout">
                 </form> 
                     <%}
-                            }else{
+                        }else{
                                 %>
-                 <li><a href="register.jsp">Register</a></li>
-                <li><a href="login.jsp">Login</a></li>
-                <%
-                                        
-                            
-                    }%>
+                            <li><a href="register.jsp">Register</a></li>
+                            <li><a href="login.jsp">Login</a></li>
+                    <% } %>
             </ul>
         </nav>
         <footer>
             <ul>
-                <li class="footer"><a href="/Instagrim">Home</a></li>
-                <li>&COPY; Andy C</li>
+                <li class="footer"><a href="/InstagrimTL">Home</a></li>
+                
             </ul>
         </footer>
     </body>

@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="uk.ac.dundee.computing.aec.instagrim.stores.*" %>
+<%@page import="uk.ac.dundee.computing.aec.InstagrimTL.stores.*" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -16,7 +16,7 @@
         
         <article>
             <h1>Error</h1>
-            <a href="/Instagrim">Home page</a>
+            <a href="/InstagrimTL">Home page</a>
             
             <p>
                 <%
@@ -40,9 +40,9 @@
                             if (lg.getlogedin() == true){
                     %>
 
-                <li><a href="/Instagrim/Images/<%=lg.getUsername()%>">Your Images</a></li>
+                <li><a href="/InstagrimTL/Images/<%=lg.getUsername()%>">Your Images</a></li>
               
-                <form method = "POST" action = "/Instagrim/Logout">
+                <form method = "POST" action = "/InstagrimTL/Logout">
                     <input type = "submit" value ="Logout">
                 </form> 
                     <%}

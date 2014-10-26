@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.ac.dundee.computing.aec.instagrim.servlets;
+package uk.ac.dundee.computing.aec.InstagrimTL.servlets;
 
 import com.datastax.driver.core.Cluster;
 import java.io.IOException;
@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
-import uk.ac.dundee.computing.aec.instagrim.models.User;
-import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
+import uk.ac.dundee.computing.aec.InstagrimTL.lib.CassandraHosts;
+import uk.ac.dundee.computing.aec.InstagrimTL.models.User;
+import uk.ac.dundee.computing.aec.InstagrimTL.stores.LoggedIn;
 
 /**
  *
@@ -63,7 +63,7 @@ public class EditProfile extends HttpServlet {
         
          User u = new User();
        u.setCluster(cluster);
-        
+        System.out.println("Do Post");
         HttpSession session = request.getSession();
         
 //        RequestDispatcher rd = request.getRequestDispatcher("/editProfile.jsp");
@@ -99,7 +99,7 @@ public class EditProfile extends HttpServlet {
            //  else if (last_name.length() < 4 || last_name.length() > 15){
             //    error("Your last name should not be less than 4 or more than 15 char long", request, response);
             //}
-            //response.sendRedirect("/Instagrim/Profile" + user);
+            //response.sendRedirect("/InstagrimTL/Profile" + user);
             System.out.println("Validation done without errors");
         }
         else{

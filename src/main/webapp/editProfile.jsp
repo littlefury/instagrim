@@ -13,18 +13,18 @@
     </head>
     <body>
         <header>
-        <h1>InstaGrim ! </h1>
+        <h1>InstagrimTL ! </h1>
         <h2>Your world in Black and White</h2>
         </header>
        
         <article>
             <h3>Edit your profile</h3>
-            <form method="POST"  action="/Instagrim/EditProfile">
+            <form method="POST"  action="/InstagrimTL/EditProfile">
                 <ul>
                     
                     <li>New email <input type="email" name="new_email"> </li>
-                    <li> New first name <input type="text" name="new_first_name"</li>
-                    <li>New last name <input type="text" name="new_last_name"</li>
+                    <li> New first name <input type="text" name="new_first_name"></li>
+                    <li>New last name <input type="text" name="new_last_name"></li>
                 </ul>
                 <br/>
                 <input type="Submit" value="EditProfile"> 
@@ -33,7 +33,7 @@
         </article>
         <footer>
             <ul>
-                <li class="footer"><a href="/Instagrim">Home</a></li>
+                <li class="footer"><a href="/InstagrimTL">Home</a></li>
             </ul>
         </footer>
     </body>
