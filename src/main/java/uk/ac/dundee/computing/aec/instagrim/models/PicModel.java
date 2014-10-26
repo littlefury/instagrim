@@ -19,7 +19,11 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.utils.Bytes;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -31,6 +35,8 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.LinkedList;
 import javax.imageio.ImageIO;
+import static javax.swing.Spring.height;
+import static javax.swing.Spring.width;
 import static org.imgscalr.Scalr.*;
 import org.imgscalr.Scalr.Method;
 
@@ -161,6 +167,54 @@ public class PicModel {
         }
         return null;
     }
+    
+    public byte[] redPic(byte[] byteArray, String type){
+        byte[] imageInByte = null;
+        try{
+            // I suspect type should be types[1].... ;)
+            String types[]=Convertors.SplitFiletype(type);
+            System.out.println("Filter.. type: " + type);
+            InputStream input = new ByteArrayInputStream(byteArray);
+            BufferedImage original = ImageIO.read(input); // dimensions width x height, black on transparent
+
+            for (int x = 0; x < original.getWidth(); x++)
+            {
+                for (int y = 0; y < original.getHeight(); y++)
+                {
+                    int rgba = original.getRGB(x,y);
+                    Color col = new Color (rgba, true);
+                    col = new Color (col.getRed(), col.getGreen() - (col.getGreen()/2), col.getBlue() - (col.getBlue()/2));
+                    original.setRGB(x, y, col.getRGB());
+                }
+            }
+//            int width = original.getWidth();
+//            int height = original.getHeight();
+//            // create red image
+//            BufferedImage redVersion = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            
+            // I also suspect this is actually drawing the image.. which is wrong..-.-
+            
+//            Graphics2D g = (Graphics2D) redVersion.getGraphics();
+//            g.setColor(Color.red);
+//            g.fillRect(0, 0, width, height);
+//
+//            // paint original with composite
+//            g.setComposite(AlphaComposite.DstIn);
+//            g.drawImage(original, 0, 0, width, height, 0, 0, width, height, null);
+            
+            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+            ImageIO.write(original, types[1], bs);
+            bs.flush();
+            imageInByte = bs.toByteArray();
+
+            bs.close();
+            input.close();
+        }
+        catch(IOException et){
+            
+        }
+        return imageInByte;
+    }
 
     public static BufferedImage createThumbnail(BufferedImage img) {
         img = resize(img, Method.SPEED, 250, OP_ANTIALIAS, OP_GRAYSCALE);
@@ -199,7 +253,7 @@ public class PicModel {
         return Pics;
     }
 
-    public Pic getPic(int image_type, java.util.UUID picid) {
+    public Pic getPic(int image_type, java.util.UUID picid) throws IOException {
         Session session = cluster.connect("instagrim");
         ByteBuffer bImage = null;
         String type = null;
@@ -209,8 +263,8 @@ public class PicModel {
             ResultSet rs = null;
             PreparedStatement ps = null;
          
-            if (image_type == Convertors.DISPLAY_IMAGE) {
-                
+            if (image_type == Convertors.DISPLAY_IMAGE || image_type == Convertors.MAKE_RED) {
+                System.out.println("Getting image...");
                 ps = session.prepare("select image,imagelength,type from pics where picid =?");
             } else if (image_type == Convertors.DISPLAY_THUMB) {
                 ps = session.prepare("select thumb,imagelength,thumblength,type from pics where picid =?");
@@ -227,7 +281,7 @@ public class PicModel {
                 return null;
             } else {
                 for (Row row : rs) {
-                    if (image_type == Convertors.DISPLAY_IMAGE) {
+                    if (image_type == Convertors.DISPLAY_IMAGE || image_type == Convertors.MAKE_RED) {
                         bImage = row.getBytes("image");
                         length = row.getInt("imagelength");
                     } else if (image_type == Convertors.DISPLAY_THUMB) {
@@ -249,6 +303,14 @@ public class PicModel {
         }
         session.close();
         Pic p = new Pic();
+        
+        if(image_type == Convertors.MAKE_RED){
+            System.out.println("Applying make red...");
+            byte[] tp = new byte[bImage.remaining()];
+            bImage.get(tp);
+            tp = redPic(tp, type);    
+            bImage = ByteBuffer.wrap(tp);
+        }
         p.setPic(bImage, length, type);
 
         return p;
