@@ -159,6 +159,38 @@ public class User {
         return info;
        }
     
+    public boolean editProfile(String username, String email, String first_name, String last_name){
+  
+    
+        Set<String> emailSet = new HashSet<String>();
+        emailSet.add(email);
+        
+        System.out.println("email: " + email + " first: " + first_name + " last: " + last_name + " user: " + username);
+        
+        Session session = cluster.connect("instagrim");
+        System.out.println("Update uprof");
+        //PreparedStatement psCheck = session.prepare("select login from userprofiles where login =?");
+        PreparedStatement ps = session.prepare("update userprofiles set email = ?, first_name = ?,last_name = ? where login =?");
+       System.out.println("updated prof");
+      //  BoundStatement boundStatementCheck = new BoundStatement(psCheck);
+        BoundStatement boundStatement = new BoundStatement(ps);
+        session.execute(boundStatement.bind(emailSet,first_name,last_name,username));
+        
+    //    ResultSet resultSet = session.execute( // this is where the query is executed
+    //            boundStatementCheck.bind( // here you are binding the 'boundStatement'
+    //                    username));
+        
+    //    if (!resultSet.isExhausted()){
+    //       return false;
+    //    }
+    //    else{
+    //    session.execute( // this is where the query is executed
+    //            boundStatement.bind( // here you are binding the 'boundStatement'
+    //                    emailSet,first_name,last_name));
+    //    }
+        return true;
+    }
+    
 }
 
     
